@@ -1,9 +1,17 @@
 package com.example.stopwatch_sw;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+
+import androidx.core.app.NotificationCompat;
+
+import java.util.Objects;
 
 public class StopWatchService extends Service {
 
@@ -14,7 +22,6 @@ public class StopWatchService extends Service {
     private String hours, minutes, seconds;
     private long secs, mins, hrs;
     private boolean isStopped = false;
-
     private Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -66,7 +73,7 @@ public class StopWatchService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        showNotificationAndStartForeGround();
         if (isStopped) {
             startTimer = System.currentTimeMillis() - elapsedTime;
         } else {
@@ -86,5 +93,28 @@ public class StopWatchService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void showNotificationAndStartForeGround() {
+        createChannel();
+        NotificationCompat.Builder notificationBuilder = null;
+        notificationBuilder = new NotificationCompat.Builder(this, "Stopwatch")
+                .setContentTitle("Stopwatch Running...")
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        Notification notification = null;
+        notification = notificationBuilder.build();
+        startForeground(120, notification);
+    }
+
+    /*
+    Create noticiation channel if OS version is greater than or eqaul to Oreo
+    */
+    public void createChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("Stopwatch", "StopWatch", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Stopwatch Notifications");
+            Objects.requireNonNull(this.getSystemService(NotificationManager.class)).createNotificationChannel(channel);
+        }
     }
 }

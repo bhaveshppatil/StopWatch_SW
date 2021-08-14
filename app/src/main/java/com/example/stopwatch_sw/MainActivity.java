@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         btnPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                intent = new Intent(MainActivity.this, StopWatchService.class);
                 stopService(intent);
                 btnStart.setVisibility(View.VISIBLE);
                 btnPause.setVisibility(View.GONE);
@@ -76,11 +77,13 @@ public class MainActivity extends AppCompatActivity {
                 stopService(intent);
             }
         });
+
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btnStart.setVisibility(View.VISIBLE);
                 btnPause.setVisibility(View.GONE);
+                intent = new Intent(MainActivity.this, StopWatchService.class);
                 stopService(intent);
                 tvTimer.setText("00:00:00");
             }
